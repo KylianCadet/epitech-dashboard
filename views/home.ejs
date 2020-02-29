@@ -1,0 +1,184 @@
+<style type="text/css">
+	<%- include('css/home.css') %>
+</style>
+
+<%- include('header'); -%>
+
+<script lang="javascript">
+	<%- include('js/update_widgets.js'); -%>
+	<%- include('js/timer.js'); -%>
+	<%- include('js/save_widgets.js'); -%>
+	<%- include('js/get_widgets.js'); -%>
+	<%- include('js/create_widgets.js'); -%>
+</script>
+
+<body>
+	<header>
+		<button style="margin-right: auto;" onclick="profile()"><%= username %></button>
+		<h1 style="color: white;">Dashboard</h1>
+		<div style="margin-left: auto;">
+			<button style="margin-left: auto;" onclick="save()">Save</button>
+			<button id="save-btn" style="margin-left: auto;" onclick="logout()">Log out</button>
+		</div>
+	</header>
+	<div class="main-container">
+		<div class="panel">
+			<div class="service-container">
+				<h1 onclick="show_hide('twitter-widget-container')">Twitter</h1>
+				<div id='twitter-widget-container' class="widget-container">
+					<h2>Timeline widget</h2>
+					<% if (!twitter_info) {%>
+					<button onclick="twitter_btn()" class="connect-btn">Connect with Twitter</button>
+					<% } else { %>
+					<button onclick="create_tl_widget()" class="widget_selector">Add tl widget</button>
+					<% } %>
+				</div>
+			</div>
+			<div class="service-container">
+				<h1 onclick="show_hide('coinbase-widget-container')">Coinbase</h1>
+				<div id='coinbase-widget-container' class="widget-container">
+					<h2>Wallet widget</h2>
+					<% if (!coinbase_info) {%>
+					<button onclick="coinbase_btn()" class="connect-btn">Connect with Coinbase</button>
+					<% } else { %>
+					<button onclick="create_wallet_widget()" class="widget_selector">Add wallet widget</button>
+					<% } %>
+					<h2>Exchange rate widget</h2>
+					<button onclick="create_exchange_widget()" class="widget_selector">Add exchange widget</button>
+				</div>
+			</div>
+		</div>
+		<div id="board" class="board" ondrop="drop_handler(event)" ondragover="dragover_handler(event)">
+			<% if (error) { %>
+				<p style="color: red;"><%= error %></p>
+			<% } %>
+			<% for (var i = 0; i != widgets_tl.length; i++) {%>
+				<script lang="javascript">
+					var type = '<%- widgets_tl[i].type %>'
+					var top_ = '<%- widgets_tl[i].top_ %>'
+					var left_ = '<%- widgets_tl[i].left_ %>'
+					var width_ = '<%- widgets_tl[i].width_ %>'
+					var height_ = '<%- widgets_tl[i].height_ %>'
+					var timer = '<%- widgets_tl[i].timer %>'
+					create_tl_widget(type, top_, left_, width_, height_, timer)
+				</script>
+			<% } %>
+			<% for (var i = 0; i != widgets_wallet.length; i++) {%>
+				<script lang="javascript">
+					var currency = '<%- widgets_wallet[i].currency %>'
+					var top_ = '<%- widgets_wallet[i].top_ %>'
+					var left_ = '<%- widgets_wallet[i].left_ %>'
+					var width_ = '<%- widgets_wallet[i].width_ %>'
+					var height_ = '<%- widgets_wallet[i].height_ %>'
+					var timer = '<%- widgets_wallet[i].timer %>'
+					create_wallet_widget(currency, top_, left_, width_, height_, timer)
+				</script>
+			<% } %>
+			<% for (var i = 0; i != widgets_exchange.length; i++) {%>
+				<script>
+					var currency1 = '<%- widgets_exchange[i].currency1 %>'
+					var currency2 = '<%- widgets_exchange[i].currency2 %>'
+					var top_ = '<%- widgets_exchange[i].top_ %>'
+					var left_ = '<%- widgets_exchange[i].left_ %>'
+					var width_ = '<%- widgets_exchange[i].width_ %>'
+					var height_ = '<%- widgets_exchange[i].height_ %>'
+					var timer = '<%- widgets_exchange[i].timer %>'
+					create_exchange_widget(currency1, currency2, top_, left_, width_, height_, timer)
+				</script>
+			<% } %>
+		</div>
+	</div>
+</body>
+
+<%- include('footer'); -%>
+
+<script type="text/javascript">
+		function logout() {
+			window.location.href = '/disconnect';
+		}
+	function twitter_btn() {
+		window.location.href = '/auth/twitter';
+	}
+	function coinbase_btn() {
+		window.location.href = '/auth/coinbase';
+	}
+	function dragover_handler(ev) {
+		ev.preventDefault();
+	}
+	function dragstart_handler(ev) {
+		ev.dataTransfer.setData("text", ev.target.id);
+	}
+	function get_len(str) {
+		return Number(str.substr(0, str.length - 2))
+	}
+	function drop_handler(ev) {
+		ev.preventDefault();
+		var data = ev.dataTransfer.getData("text");
+		var elem = document.getElementById(data);
+		if (elem.classList[0] != 'widget')
+			return
+		var style = document.defaultView.getComputedStyle(elem);
+		elem.style.left = (event.clientX - Number(style.width.substr(0, style.width.length - 2)) / 2) + 'px';
+		elem.style.top = (event.clientY - Number(style.height.substr(0, style.height.length - 2)) / 2) + 'px';
+		var min_width = window.innerWidth * (20 / 100)
+		var max_width = window.innerWidth - Number(style.width.substr(0, style.width.length - 2))
+		var min_heigth = 100;
+		if (get_len(elem.style.left) > max_width)
+			elem.style.left = (max_width) + 'px'
+		if (get_len(elem.style.left) < min_width)
+			elem.style.left = (min_width) + 'px'
+		if (get_len(elem.style.top) < min_heigth)
+			elem.style.top = (min_heigth) + 'px'
+		document.getElementById('board').appendChild(elem);
+	}
+	function delete_box(id) {
+		var elem = document.getElementById(id);
+		my_timer.stopTimer(id);
+		elem.parentNode.removeChild(elem);
+	}
+	function show_hide(id) {
+		var elem = document.getElementById(id);
+		if (elem.style.display == 'block')
+			elem.style.display = 'none'
+		else
+			elem.style.display = 'block'
+	}
+	function profile() {
+		window.location.href = '/profile';
+	}
+	async function save() {
+		document.getElementById('save-btn').disabled = true;
+		const wallet_widgets = get_wallet_widgets()
+		const tl_widgets = get_tl_widgets()
+		const exchange_widgets = get_exchange_widgets()
+		await fetch('/home/save', {
+			method: 'post',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				wallet_widgets: wallet_widgets,
+				tl_widgets: tl_widgets,
+				exchange_widgets: exchange_widgets,
+			})
+		})
+		document.getElementById('save-btn').disabled = false;
+	}
+</script>
+
+<script>window.twttr = (function (d, s, id) {
+		var js, fjs = d.getElementsByTagName(s)[0],
+			t = window.twttr || {};
+		if (d.getElementById(id)) return t;
+		js = d.createElement(s);
+		js.id = id;
+		js.src = "https://platform.twitter.com/widgets.js";
+		fjs.parentNode.insertBefore(js, fjs);
+
+		t._e = [];
+		t.ready = function (f) {
+			t._e.push(f);
+		};
+
+		return t;
+	}(document, "script", "twitter-wjs"));</script>

@@ -1,0 +1,34 @@
+body {
+  margin: 0%;
+  padding: 0%;
+  background-color: #f2f2f2;
+  height: 70%;
+}
+
+header {
+  display: flex;
+  background-color: #283e4a;
+  align-items: center;
+  justify-content: center;
+}
+
+header>button {
+  background-color: #d6d6d6;
+  border-radius: 10px;
+  color: #283e4a;
+  margin: 30px;
+  padding: 10px;
+}
+
+.main-container {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  height: 100%;
+}
+
+.main-container>button {
+  align-self: center;
+  padding: 10px;
+  margin: 10px;
+}

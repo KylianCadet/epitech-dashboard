@@ -1,0 +1,23 @@
+version: "3"
+services:
+  server:
+    build: .
+    depends_on:
+      - postgres
+    environment:
+      - DATABASE_URL=postgres://user:pass@postgres:5432/db
+      - PORT=8080
+      - NODE_ENV=production
+    ports:
+      - "8080:8080"
+  postgres:
+    image: postgres:10.10-alpine
+    # init db when empty
+    volumes:
+    - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_DB=db
+    ports:
+      - "8081:5432"

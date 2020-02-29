@@ -1,0 +1,30 @@
+<style>
+	<%- include('css/auth.css') %>
+</style>
+
+
+<%- include('header'); -%>
+
+<body>
+	<header>
+		<h1 style="color: white;">Dashboard</h1>
+	</header>
+	<div class="sub-header">
+		<p>> Register</p>
+	</div>
+	<% if (error) {%>
+	<p style="color: red;"><%= error %></p>
+	<% } %>
+	<div class="main-container">
+		<form action="/register" method="POST">
+			Username:<br />
+			<input type="text" name="username"><br />
+			Password:<br />
+			<input type="password" name="password"><br />
+			<input type="submit" value="Submit">
+		</form>
+		<p>Already have an account ? <a href="/">login</a></p>
+	</div>
+</body>
+
+<%- include('footer'); -%>

@@ -1,0 +1,43 @@
+<style type="text/css">
+	<%- include('css/profile.css'); %>
+</style>
+
+<%- include('header'); -%>
+
+<body>
+	<header>
+		<button style="margin-right: auto" onclick="back()">home</button>
+		<h1 style="color: white; align-self: center;">Dashboard</h1>
+		<button style="margin-left: auto;" onclick="logout()">Log out</button>
+	</header>
+	<div class="main-container">
+		<% if (coinbase_info) {%>
+		<button onclick="unlink_coinbase()">Revoke Coinbase access</button>
+		<% } %>
+		<% if (twitter_info) {%>
+		<button onclick="unlink_twitter()">Revoke Twitter access</button>
+		<% } %>
+		<% if (!coinbase_info && !twitter_info) { %>
+		<p style="align-self: center;">You don't have any services link to Dashboard app</p>
+		<% } %>
+	</div>
+</body>
+
+<%- include('footer'); -%>
+
+
+<script lang="javascript">
+	function back() {
+		window.location.href = '/home'
+	}
+	function logout() {
+		window.location.href = '/disconnect'
+	}
+	function unlink_coinbase() {
+		window.location.href = '/disconnect/coinbase'
+	}
+	function unlink_twitter() {
+		window.location.href = '/disconnect/twitter'
+
+	}
+</script>
