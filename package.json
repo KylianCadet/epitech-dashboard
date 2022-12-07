@@ -16,7 +16,7 @@
     "express-session": "^1.17.0",
     "node-fetch": "^2.6.0",
     "pg": "^7.12.1",
-    "qs": "^6.9.0",
+    "qs": "^6.7.3",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7",
     "twitter": "^1.7.1"
